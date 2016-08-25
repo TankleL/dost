@@ -1,0 +1,40 @@
+﻿<Window x:Class="dost.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:dost"
+        Title="Doc Store" Height="700" Width="1200" Background="white">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="5*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="25"/>
+        </Grid.RowDefinitions>
+
+        <Menu Margin="0" Grid.Row="0" Grid.RowSpan="1" Grid.ColumnSpan="2" Background="White">
+            <MenuItem Header="文件(F)">
+                <MenuItem Header="打开仓库(O)..." Click="OnSelectRepo"/>
+                <Separator/>
+                <MenuItem Header="退出(E)" Click="OnExit"/>
+            </MenuItem>
+        </Menu>
+        <TabControl Grid.Row="1" Grid.RowSpan="1">
+            <TabItem Header="历史图">
+                <Grid Background="WhiteSmoke">
+                    <local:HistoryGraphView x:Name="m_historyGraph" Margin="0"
+                                Grid.Row="1" Grid.RowSpan="1" Grid.Column="1" Grid.ColumnSpan="1" Width="Auto" Height="Auto"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="目录树">
+                <Grid Background="WhiteSmoke"/>
+            </TabItem>
+        </TabControl>
+        <local:CommitInfo Grid.Row="1" Grid.RowSpan="1" Grid.Column="1" Grid.ColumnSpan="1" Width="Auto" VerticalAlignment="Top"
+                          />
+
+        <Label Name="m_statText" Content="就绪" Width="300" HorizontalAlignment="Left" Grid.Row="2"/>
+    </Grid>
+</Window>
