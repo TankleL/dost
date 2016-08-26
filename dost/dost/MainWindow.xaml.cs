@@ -29,6 +29,8 @@ namespace dost
         {
             InitializeComponent();
             m_historyGraph.CommitClicked += SelectCommit;
+            m_commitDiffView.SelectionChanged += change => m_textDiff.Show(change);
+           
             m_fileTree.PreviewMouseWheel += (sender, e) =>
             {
                 var eventArg = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta);

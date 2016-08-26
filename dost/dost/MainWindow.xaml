@@ -9,8 +9,9 @@
         <HierarchicalDataTemplate DataType="{x:Type g:Tree}" ItemsSource="{Binding Path=Children}">
             <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" ToolTip="{Binding Hash}"/>
         </HierarchicalDataTemplate>
+        
         <DataTemplate DataType="{x:Type g:AbstractObject}">
-            <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" Foreground="LightSkyBlue" ToolTip="{Binding Hash}"/>
+            <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" Foreground="DarkBlue" ToolTip="{Binding Hash}"/>
         </DataTemplate>
     </Window.Resources>
     <Grid>
@@ -116,14 +117,14 @@
             </Label.Triggers>
         </Label>
         
-        <Grid Name="m_gridDetailInfo" Grid.Column="1" Margin="0,130,0,0" Grid.Row="1">
+        <Grid Name="m_gridDetailInfo" Grid.Column="1" Margin="0,170,0,0" Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="3*" MinHeight="150"/>
                 <RowDefinition Height="5*" MinHeight="100"/>
             </Grid.RowDefinitions>
             <local:CommitDiffView x:Name="m_commitDiffView" Margin="0,0,0,5" Width="Auto" Visibility="Visible" Height="Auto" Grid.Row="0" Grid.RowSpan="1"/>
             <GridSplitter Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="#FFCBCBCB"/>
-            <GroupBox Header="GroupBox" Margin="0" Grid.Row="1" Grid.RowSpan="1"/>
+            <local:TextDiffView x:Name="m_textDiff" Grid.Row="1" Width="Auto" Height="Auto" />
         </Grid>
 
     </Grid>
