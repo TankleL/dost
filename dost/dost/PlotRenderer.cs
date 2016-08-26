@@ -119,7 +119,7 @@ namespace dost
 
         protected override Brush laneColor(PlotLane my_lane)
         {
-            return Brushes.Black;
+            return Brushes.DodgerBlue;
         }
 
         protected override void drawLine(Brush color, int x1, int y1, int x2, int y2, int width)
@@ -130,7 +130,7 @@ namespace dost
 
         protected override void drawCommitDot(int x, int y, int w, int h)
         {
-            var child = new Ellipse { Width = w, Height = h, Fill = Brushes.Black, Tag = CurrentCommit, ToolTip = CurrentCommit.Name };
+            var child = new Ellipse { Width = w, Height = h, Fill = Brushes.DodgerBlue, Tag = CurrentCommit, ToolTip = CurrentCommit.Name };
             child.SetValue(Canvas.LeftProperty, (double)x);
             child.SetValue(Canvas.TopProperty, (double)y + VerticalOffset);
             child.PreviewMouseDown += OnCommitClick;

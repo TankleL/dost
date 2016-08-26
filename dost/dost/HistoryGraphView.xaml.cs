@@ -101,7 +101,7 @@ namespace dost
 
         private void OnLabelClicked(GitSharp.Core.Ref @ref)
         {
-
+            m_canvas.Height = 0;
         }
     }
 }
