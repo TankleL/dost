@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using System.IO;
 using Microsoft.Win32;
 using GitSharp;
 
@@ -23,13 +24,13 @@ namespace dost
     /// </summary>
     public partial class MainWindow : Window
     {
-        private Repository m_repo;
+        private Repository  m_repo;
 
         public MainWindow()
         {
             InitializeComponent();
             m_historyGraph.CommitClicked += SelectCommit;
-            m_commitDiffView.SelectionChanged += change => m_textDiff.Show(change);
+            m_commitDiffView.SelectionChanged += SelectionChanged;
            
             m_fileTree.PreviewMouseWheel += (sender, e) =>
             {
@@ -39,6 +40,7 @@ namespace dost
                 this.m_fileTree.RaiseEvent(eventArg);
             };
 
+            m_welcomeBgk.Visibility = System.Windows.Visibility.Visible;
             m_bgkLoadRepo.Visibility = System.Windows.Visibility.Visible;
             m_btnLoadRepo.Visibility = System.Windows.Visibility.Visible;
 
@@ -48,12 +50,38 @@ namespace dost
             m_cards.Visibility = System.Windows.Visibility.Hidden;
             m_gridDetailInfo.Visibility = System.Windows.Visibility.Hidden;
             m_commitInfo.Visibility = System.Windows.Visibility.Hidden;
+
+            DocOpt.ClearSpace();
+
+            m_msgStatText.DataContext = m_statText;
         }
 
 
-        private void SetStatusReady()
+        public void SetStatusReady()
         {
             m_statText.Content = "就绪";
+        }
+
+        public void SetStatus(string status)
+        {
+            m_statText.Content = status;
+        }
+
+        public void ShowWaitUI(bool onoff)
+        {
+            if (onoff == true)
+            {
+                m_waitFrame.Visibility = System.Windows.Visibility.Visible;
+                return;
+            }
+            m_waitFrame.Visibility = System.Windows.Visibility.Hidden;
+        }
+
+        private void SelectionChanged(Change change)
+        {
+            ShowWaitUI(true);
+            m_textDiff.Show(change);
+            ShowWaitUI(false);
         }
 
         private void SelectCommit(Commit commit)
@@ -63,7 +91,7 @@ namespace dost
 
             try
             {
-                m_statText.Content = "正在读取信息...";
+                SetStatus("正在读取信息...");
                 m_commitInfo.Commit = commit;
                 m_fileTree.ItemsSource = commit.Tree.Children;
                 m_commitDiffView.Init(commit.Parent, commit);
@@ -78,15 +106,57 @@ namespace dost
             }
         }
 
+        private bool NewRepo()
+        {
+            bool res = false;
+            var dlg = new System.Windows.Forms.FolderBrowserDialog();
+            dlg.Description = "选择仓库（文件夹）所在位置";
+            dlg.ShowNewFolderButton = true;
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                SetStatus("创建中...");
+
+                try
+                {
+                    GitSharp.Git.Init(dlg.SelectedPath);
+
+                    if (null != m_repo)
+                    {
+                        m_repo.Close();
+                        m_repo = null;
+                    }
+
+                    m_repo = new Repository(dlg.SelectedPath);
+                    m_historyGraph.Update(m_repo);
+                    m_repoPathText.Text = dlg.SelectedPath;
+                    SelectCommit(m_repo.Head.CurrentCommit);
+
+                    res = true;
+                }
+                catch (Exception ex)
+                {
+                    SetStatus("发生错误...");
+                    MessageBox.Show(ex.Message, "创建过程错误");
+                }
+                finally
+                {
+                    SetStatusReady();
+                }
+            }
+
+            return res;
+        }
+
         private bool LoadRepo()
         {
             bool res = false;
+
             var dlg = new System.Windows.Forms.FolderBrowserDialog();
             dlg.Description = "选择仓库（文件夹）所在位置";
             dlg.ShowNewFolderButton = false;
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                m_statText.Content = "加载中...";
+                SetStatus("加载中...");
 
                 try
                 {
@@ -99,7 +169,7 @@ namespace dost
                 }
                 catch (Exception ex)
                 {
-                    m_statText.Content = "发生错误...";
+                    SetStatus("发生错误...");
                     MessageBox.Show(ex.Message, "加载过程错误");
                 }
                 finally
@@ -116,10 +186,14 @@ namespace dost
             bool res = false;
             try
             {
-                m_statText.Content = "加载中...";
+                SetStatus("加载中...");
 
                 if (null != m_repo)
+                {
                     m_repo.Close();
+                    m_repo = null;
+                }
+
                 m_repo = new Repository(repoPath);
                 m_historyGraph.Update(m_repo);
                 SelectCommit(m_repo.Head.CurrentCommit);
@@ -128,7 +202,7 @@ namespace dost
             }
             catch (Exception ex)
             {
-                m_statText.Content = "发生错误...";
+                SetStatus("发生错误...");
                 MessageBox.Show(ex.Message, "加载过程错误");
             }
             finally
@@ -148,6 +222,7 @@ namespace dost
         {
             if(LoadRepo())
             {
+                m_welcomeBgk.Visibility = System.Windows.Visibility.Hidden;
                 m_bgkLoadRepo.Visibility = System.Windows.Visibility.Hidden;
                 m_btnLoadRepo.Visibility = System.Windows.Visibility.Hidden;
 
@@ -170,6 +245,7 @@ namespace dost
         {
             if(ReLoadRepo(m_repoPathText.Text))
             {
+                m_welcomeBgk.Visibility = System.Windows.Visibility.Hidden;
                 m_bgkLoadRepo.Visibility = System.Windows.Visibility.Hidden;
                 m_btnLoadRepo.Visibility = System.Windows.Visibility.Hidden;
 
@@ -187,6 +263,7 @@ namespace dost
         {
             LeaveRepo();
 
+            m_welcomeBgk.Visibility = System.Windows.Visibility.Visible;
             m_bgkLoadRepo.Visibility = System.Windows.Visibility.Visible;
             m_btnLoadRepo.Visibility = System.Windows.Visibility.Visible;
 
@@ -203,6 +280,7 @@ namespace dost
         {
             if (LoadRepo())
             {
+                m_welcomeBgk.Visibility = System.Windows.Visibility.Hidden;
                 m_bgkLoadRepo.Visibility = System.Windows.Visibility.Hidden;
                 m_btnLoadRepo.Visibility = System.Windows.Visibility.Hidden;
 
@@ -218,8 +296,38 @@ namespace dost
 
         private void m_btnNewRepo_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            if(NewRepo())
+            {
+                m_welcomeBgk.Visibility = System.Windows.Visibility.Hidden;
+                m_bgkLoadRepo.Visibility = System.Windows.Visibility.Hidden;
+                m_btnLoadRepo.Visibility = System.Windows.Visibility.Hidden;
 
+                m_bgkNewRepo.Visibility = System.Windows.Visibility.Hidden;
+                m_btnNewRepo.Visibility = System.Windows.Visibility.Hidden;
+
+                m_cards.Visibility = System.Windows.Visibility.Visible;
+                m_commitDiffView.Visibility = System.Windows.Visibility.Visible;
+                m_commitInfo.Visibility = System.Windows.Visibility.Visible;
+                m_gridDetailInfo.Visibility = System.Windows.Visibility.Visible;
+            }
         }
 
+        private void OnNewRepo(object sender, RoutedEventArgs e)
+        {
+            if (NewRepo())
+            {
+                m_welcomeBgk.Visibility = System.Windows.Visibility.Hidden;
+                m_bgkLoadRepo.Visibility = System.Windows.Visibility.Hidden;
+                m_btnLoadRepo.Visibility = System.Windows.Visibility.Hidden;
+
+                m_bgkNewRepo.Visibility = System.Windows.Visibility.Hidden;
+                m_btnNewRepo.Visibility = System.Windows.Visibility.Hidden;
+
+                m_cards.Visibility = System.Windows.Visibility.Visible;
+                m_commitDiffView.Visibility = System.Windows.Visibility.Visible;
+                m_commitInfo.Visibility = System.Windows.Visibility.Visible;
+                m_gridDetailInfo.Visibility = System.Windows.Visibility.Visible;
+            }
+        }
     }
 }

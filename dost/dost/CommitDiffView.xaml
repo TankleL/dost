@@ -9,7 +9,7 @@
         <local:ChangeColorConverter x:Key="ChangeColorConverter"/>
     </UserControl.Resources>
     <Grid>
-        <Label Content="文件摘要" Margin="0" VerticalAlignment="Top" Height="25" Background="#FFE2E2E2"/>
+        <Label Content="文件摘要" Margin="0" VerticalAlignment="Top" Height="25" Background="#FFE2E2E2" FontWeight="Bold"/>
         <ListView Name="m_treediff" DockPanel.Dock="Top" Grid.RowSpan="2" Grid.Row="1" Margin="0,25,0,0">
             <ListView.View>
                 <GridView>
