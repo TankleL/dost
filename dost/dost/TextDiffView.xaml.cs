@@ -50,6 +50,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using System.Windows.Xps.Packaging;
 using System.Threading;
 using System.Text.RegularExpressions;
 using GitSharp;
@@ -95,6 +96,7 @@ namespace dost
             get;
             private set;
         }
+
 
         private List<string> m_workedCommits = new List<string>();
         private string m_workedPath = String.Empty;
@@ -146,19 +148,43 @@ namespace dost
 
             try
             {
-                mainWnd.SetStatus("正在分析文件差异。。。");
-                mainWnd.ShowWaitUI(true);
-                mainWnd.InvalidateVisual();
-
                 if (change.Path.LastIndexOf(".doc") == change.Path.Length - 4)
                 {
-                    DocOpt.CompareWordDocument(m_docViewer, a, DocOpt.OfficeDocuFormat.doc, b, DocOpt.OfficeDocuFormat.doc);
+                    new Thread(() =>
+                    {
+                        Application.Current.Dispatcher.Invoke(new Action(()=>{
+                            ((MainWindow)Application.Current.MainWindow).SetStatus("正在分析文件差异...");
+                            ((MainWindow)Application.Current.MainWindow).ShowWaitUI(true);
+                        }));
+
+                        m_docViewer.Document =
+                            DocOpt.CompareWordDocument(a, DocOpt.OfficeDocuFormat.doc, b, DocOpt.OfficeDocuFormat.doc).GetFixedDocumentSequence();
+                    }).Start();
 
                     ShowCardDoc();
                 }
                 else if (change.Path.LastIndexOf(".docx") == change.Path.Length - 5)
-                {
-                    DocOpt.CompareWordDocument(m_docViewer, a, DocOpt.OfficeDocuFormat.docx, b, DocOpt.OfficeDocuFormat.docx);
+                {                    
+                    new Thread(() =>
+                    {
+                        XpsDocument resDoc = null;
+                        Application.Current.Dispatcher.Invoke(new Action(() =>
+                        {
+                            ((MainWindow)Application.Current.MainWindow).SetStatus("正在分析文件差异...");
+                            ((MainWindow)Application.Current.MainWindow).ShowWaitUI(true);
+                        }));
+
+                        // this process may take a long time to execute.
+                        resDoc =
+                            DocOpt.CompareWordDocument(a, DocOpt.OfficeDocuFormat.docx, b, DocOpt.OfficeDocuFormat.docx);
+
+                         Application.Current.Dispatcher.Invoke(new Action(() =>
+                        {
+                            m_docViewer.Document = resDoc.GetFixedDocumentSequence();
+                            ((MainWindow)Application.Current.MainWindow).SetStatusReady();
+                            ((MainWindow)Application.Current.MainWindow).ShowWaitUI(false);
+                        }));
+                    }).Start();
 
                     ShowCardDoc();
                 }
@@ -181,12 +207,8 @@ namespace dost
             {
                 MessageBox.Show(ex.Message);
             }
-            finally
-            {
-                mainWnd.SetStatusReady();
-                mainWnd.ShowWaitUI(false);
-            }
         }
+
 
         private void ShowCardDoc()
         {

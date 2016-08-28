@@ -31,7 +31,7 @@
                         <DataTemplate>
                             <Grid Loaded="StretchDataTemplate" Margin="-1">
                                 <Border BorderBrush="DarkGray" BorderThickness="0,1,0,1" HorizontalAlignment="Stretch" Background="{Binding Converter={StaticResource BlockColorConverterA}}" ToolTip="{Binding EditWithRespectToA}">
-                                    <TextBlock Text="{Binding Converter={StaticResource BlockTextConverterA}}"/>
+                                    <TextBlock Text="{Binding Converter={StaticResource BlockTextConverterA}}" FontFamily="Consolas"/>
                                 </Border>
                             </Grid>
                         </DataTemplate>
@@ -45,7 +45,7 @@
                         <DataTemplate>
                             <Grid Loaded="StretchDataTemplate" Margin="-1">
                                 <Border BorderBrush="DarkGray" BorderThickness="0,1,0,1"  HorizontalAlignment="Stretch" Background="{Binding Converter={StaticResource BlockColorConverterB}}" ToolTip="{Binding EditWithRespectToA}">
-                                    <TextBlock Text="{Binding Converter={StaticResource BlockTextConverterB}}"/>
+                                    <TextBlock Text="{Binding Converter={StaticResource BlockTextConverterB}}" FontFamily="Consolas"/>
                                 </Border>
                             </Grid>
                         </DataTemplate>

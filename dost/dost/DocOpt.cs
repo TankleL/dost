@@ -164,15 +164,16 @@ namespace dost
             }
         }
 
+
         /// <summary>
         /// Compare two word documnet
         /// </summary>
-        /// <param name="viewer"></param>
         /// <param name="wordDocDataRef"></param>
         /// <param name="RefFormat"></param>
         /// <param name="wordDocDataComp"></param>
         /// <param name="CompFormat"></param>
-        public static void CompareWordDocument(DocumentViewer viewer, byte[] wordDocDataRef, OfficeDocuFormat RefFormat, byte[] wordDocDataComp, OfficeDocuFormat CompFormat)
+        /// <returns></returns>
+        public static XpsDocument CompareWordDocument(byte[] wordDocDataRef, OfficeDocuFormat RefFormat, byte[] wordDocDataComp, OfficeDocuFormat CompFormat)
         {
             string resDocPath = String.Empty;
             string pathRef = String.Empty;
@@ -230,6 +231,8 @@ namespace dost
             // Create a WordApplication and host word document 
             Word.Application wordApp = new Microsoft.Office.Interop.Word.Application() { Visible = false };
 
+            XpsDocument result = null;
+
             try
             {
                 wordApp.Documents.Open(pathRef);
@@ -251,8 +254,7 @@ namespace dost
                 doc = wordApp.ActiveDocument;
                 doc.SaveAs(pathXps, Word.WdSaveFormat.wdFormatXPS);
 
-                XpsDocument xpsDocument = new XpsDocument(pathXps, FileAccess.Read);
-                viewer.Document = xpsDocument.GetFixedDocumentSequence();
+                result = new XpsDocument(pathXps, FileAccess.Read);
             }
             catch(Exception ex)
             {
@@ -263,6 +265,8 @@ namespace dost
                 wordApp.Documents.Close(Word.WdSaveOptions.wdDoNotSaveChanges);
                 ((Word._Application)wordApp).Quit(Word.WdSaveOptions.wdDoNotSaveChanges);
             }
+
+            return result;
         }
     }
 }
