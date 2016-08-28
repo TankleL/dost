@@ -152,13 +152,22 @@ namespace dost
                 {
                     new Thread(() =>
                     {
+                        XpsDocument resDoc = null;
                         Application.Current.Dispatcher.Invoke(new Action(()=>{
                             ((MainWindow)Application.Current.MainWindow).SetStatus("正在分析文件差异...");
                             ((MainWindow)Application.Current.MainWindow).ShowWaitUI(true);
                         }));
 
-                        m_docViewer.Document =
-                            DocOpt.CompareWordDocument(a, DocOpt.OfficeDocuFormat.doc, b, DocOpt.OfficeDocuFormat.doc).GetFixedDocumentSequence();
+                        // this process may take a long time to execute.
+                        resDoc =
+                            DocOpt.CompareWordDocument(a, DocOpt.OfficeDocuFormat.doc, b, DocOpt.OfficeDocuFormat.doc);
+
+                        Application.Current.Dispatcher.Invoke(new Action(() =>
+                        {
+                            m_docViewer.Document = resDoc.GetFixedDocumentSequence();
+                            ((MainWindow)Application.Current.MainWindow).SetStatusReady();
+                            ((MainWindow)Application.Current.MainWindow).ShowWaitUI(false);
+                        }));
                     }).Start();
 
                     ShowCardDoc();
@@ -178,7 +187,7 @@ namespace dost
                         resDoc =
                             DocOpt.CompareWordDocument(a, DocOpt.OfficeDocuFormat.docx, b, DocOpt.OfficeDocuFormat.docx);
 
-                         Application.Current.Dispatcher.Invoke(new Action(() =>
+                        Application.Current.Dispatcher.Invoke(new Action(() =>
                         {
                             m_docViewer.Document = resDoc.GetFixedDocumentSequence();
                             ((MainWindow)Application.Current.MainWindow).SetStatusReady();
