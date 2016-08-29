@@ -105,7 +105,6 @@ namespace dost
         {
             if (change == null)
             {
-                Clear();
                 return;
             }
             
@@ -141,7 +140,7 @@ namespace dost
             
             
             // start processing difference analysis.
-            MainWindow mainWnd = Application.Current.MainWindow as MainWindow;
+            Clear();
             
             var a = (change.ReferenceObject != null ? (change.ReferenceObject as Blob).RawData : new byte[0]);
             var b = (change.ComparedObject != null ? (change.ComparedObject as Blob).RawData : new byte[0]);
@@ -214,10 +213,87 @@ namespace dost
             }
             catch(Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message, "错误");
             }
         }
 
+        public void Show(byte[] a, byte[] b, string path)
+        {
+            // start processing difference analysis.
+            Clear();
+
+            try
+            {
+                if (path.LastIndexOf(".doc") == path.Length - 4)
+                {
+                    new Thread(() =>
+                    {
+                        XpsDocument resDoc = null;
+                        Application.Current.Dispatcher.Invoke(new Action(() =>
+                        {
+                            ((MainWindow)Application.Current.MainWindow).SetStatus("正在分析文件差异...");
+                            ((MainWindow)Application.Current.MainWindow).ShowWaitUI(true);
+                        }));
+
+                        // this process may take a long time to execute.
+                        resDoc =
+                            DocOpt.CompareWordDocument(a, DocOpt.OfficeDocuFormat.doc, b, DocOpt.OfficeDocuFormat.doc);
+
+                        Application.Current.Dispatcher.Invoke(new Action(() =>
+                        {
+                            m_docViewer.Document = resDoc.GetFixedDocumentSequence();
+                            ((MainWindow)Application.Current.MainWindow).SetStatusReady();
+                            ((MainWindow)Application.Current.MainWindow).ShowWaitUI(false);
+                        }));
+                    }).Start();
+
+                    ShowCardDoc();
+                }
+                else if (path.LastIndexOf(".docx") == path.Length - 5)
+                {
+                    new Thread(() =>
+                    {
+                        XpsDocument resDoc = null;
+                        Application.Current.Dispatcher.Invoke(new Action(() =>
+                        {
+                            ((MainWindow)Application.Current.MainWindow).SetStatus("正在分析文件差异...");
+                            ((MainWindow)Application.Current.MainWindow).ShowWaitUI(true);
+                        }));
+
+                        // this process may take a long time to execute.
+                        resDoc =
+                            DocOpt.CompareWordDocument(a, DocOpt.OfficeDocuFormat.docx, b, DocOpt.OfficeDocuFormat.docx);
+
+                        Application.Current.Dispatcher.Invoke(new Action(() =>
+                        {
+                            m_docViewer.Document = resDoc.GetFixedDocumentSequence();
+                            ((MainWindow)Application.Current.MainWindow).SetStatusReady();
+                            ((MainWindow)Application.Current.MainWindow).ShowWaitUI(false);
+                        }));
+                    }).Start();
+
+                    ShowCardDoc();
+                }
+                else if (path.LastIndexOf(".jpg") == path.Length - 4 ||
+                    path.LastIndexOf(".jpeg") == path.Length - 5)
+                {
+                    // TODO:
+                    // Show image - jpeg difference here
+                }
+                else
+                {
+                    a = (Diff.IsBinary(a) == true ? Encoding.ASCII.GetBytes("Binary content\nFile size: " + a.Length) : a);
+                    b = (Diff.IsBinary(b) == true ? Encoding.ASCII.GetBytes("Binary content\nFile size: " + b.Length) : b);
+                    Init(new Diff(a, b));
+
+                    ShowCardText();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
 
         private void ShowCardDoc()
         {

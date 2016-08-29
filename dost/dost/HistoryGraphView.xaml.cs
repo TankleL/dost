@@ -38,6 +38,7 @@
 using System;
 using System.Linq;
 
+using System.Windows;
 using GitSharp;
 using GitSharp.Core.RevPlot;
 
@@ -101,7 +102,8 @@ namespace dost
 
         private void OnLabelClicked(GitSharp.Core.Ref @ref)
         {
-            m_canvas.Height = 0;
+            string text = @ref.Name;
+            MessageBox.Show(text, "详细信息");
         }
     }
 }

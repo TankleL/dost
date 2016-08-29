@@ -14,14 +14,14 @@
             <ListView.View>
                 <GridView>
                     <GridView.Columns>
-                        <GridViewColumn Header="Change" Width="80">
+                        <GridViewColumn Header="变更" Width="80">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding Path=ChangeType}" Foreground="{Binding Converter={StaticResource ChangeColorConverter}}"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Header="Path" DisplayMemberBinding="{Binding Path=Path}"/>
+                        <GridViewColumn Header="路径" DisplayMemberBinding="{Binding Path=Path}"/>
                         <!--<GridViewColumn Header="Hash" DisplayMemberBinding="{Binding Path=ChangedObject.ShortHash}" />-->
                     </GridView.Columns>
                 </GridView>

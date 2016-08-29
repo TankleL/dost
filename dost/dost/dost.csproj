@@ -73,6 +73,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CommitDialog.xaml.cs">
+      <DependentUpon>CommitDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CommitDiffView.xaml.cs">
       <DependentUpon>CommitDiffView.xaml</DependentUpon>
     </Compile>
@@ -80,14 +83,25 @@
       <DependentUpon>CommitInfo.xaml</DependentUpon>
     </Compile>
     <Compile Include="DocOpt.cs" />
+    <Compile Include="GenericConverter.cs" />
     <Compile Include="HistoryGraphView.xaml.cs">
       <DependentUpon>HistoryGraphView.xaml</DependentUpon>
     </Compile>
     <Compile Include="IRepositoryView.cs" />
     <Compile Include="Selection.cs" />
+    <Compile Include="StatusList.xaml.cs">
+      <DependentUpon>StatusList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StatusView.xaml.cs">
+      <DependentUpon>StatusView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TextDiffView.xaml.cs">
       <DependentUpon>TextDiffView.xaml</DependentUpon>
     </Compile>
+    <Page Include="CommitDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="CommitDiffView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -116,6 +130,14 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="StatusList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StatusView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="TextDiffView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

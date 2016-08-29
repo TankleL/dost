@@ -30,8 +30,12 @@
                 <MenuItem Header="打开仓库(O)..." Click="OnLoadRepo"/>
                 <MenuItem Header="新建仓库(N)..." Click="OnNewRepo"/>
                 <Separator/>
-                <MenuItem Header="离开仓库(L)" Click="OnLeaveRepo"/>
+                <MenuItem Header="离开仓库(L)" Click="OnLeaveRepo" IsEnabled="False"/>
                 <MenuItem Header="退出(E)" Click="OnExit"/>
+            </MenuItem>
+            <MenuItem Header="模式(E)">
+                <MenuItem Name="m_mi_mode_browse" Header="浏览(B)" IsCheckable="True" IsChecked="True" Click="OnBrowseMode"/>
+                <MenuItem Name="m_mi_mode_edit" Header="编辑(C)" IsCheckable="True" IsChecked="False" Click="OnEditMode"/>
             </MenuItem>
         </Menu>
 
@@ -39,7 +43,13 @@
             <TabItem Header="历史图">
                 <Grid Background="WhiteSmoke">
                     <local:HistoryGraphView x:Name="m_historyGraph" Margin="0"
-                                Grid.Row="1" Grid.RowSpan="1" Grid.Column="1" Grid.ColumnSpan="1" Width="Auto" Height="Auto" VerticalContentAlignment="Top"/>
+                                Grid.Row="1" Grid.RowSpan="1" Grid.Column="1" Grid.ColumnSpan="1" Width="Auto" Height="Auto" VerticalContentAlignment="Top">
+                        <local:HistoryGraphView.ContextMenu>
+                            <ContextMenu StaysOpen="True">
+                                <MenuItem Header="ABC"/>
+                            </ContextMenu>
+                        </local:HistoryGraphView.ContextMenu>
+                    </local:HistoryGraphView>
                 </Grid>
             </TabItem>
             <TabItem Header="目录树">
@@ -54,7 +64,7 @@
             </TabItem>
         </TabControl>
 
-        <local:CommitInfo x:Name="m_commitInfo" Grid.Row="1" Grid.RowSpan="1" Grid.Column="1" Grid.ColumnSpan="1" Width="Auto" VerticalAlignment="Top" Visibility="Visible"/>
+        <local:CommitInfo x:Name="m_commitInfo" Grid.Row="1" Grid.RowSpan="1" Grid.Column="1" Grid.ColumnSpan="1" Width="Auto" VerticalAlignment="Top" Visibility="Hidden"/>
 
         <Separator Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Top" Margin="0"/>
         <Label Name="m_statText" Content="就绪" Width="300" HorizontalAlignment="Left" Grid.Row="2"/>
@@ -127,7 +137,7 @@
             </Label.Triggers>
         </Label>
 
-        <Grid Name="m_gridDetailInfo" Grid.Column="1" Margin="0,170,0,0" Grid.Row="1" Visibility="Visible">
+        <Grid Name="m_gridDetailInfo" Grid.Column="1" Margin="0,170,0,0" Grid.Row="1" Visibility="Hidden">
             <Grid.RowDefinitions>
                 <RowDefinition Height="3*" MinHeight="150"/>
                 <RowDefinition Height="5*" MinHeight="100"/>
@@ -135,6 +145,10 @@
             <local:CommitDiffView x:Name="m_commitDiffView" Margin="0,0,0,5" Width="Auto" Visibility="Visible" Height="Auto" Grid.Row="0" Grid.RowSpan="1"/>
             <GridSplitter Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="#FFCBCBCB"/>
             <local:TextDiffView x:Name="m_textDiff" Grid.Row="1" Width="Auto" Height="Auto" />
+        </Grid>
+        
+        <Grid Name="m_gridEdit" Grid.Row="1" Grid.Column="1" Visibility="Hidden">
+            <local:StatusView x:Name="m_statusView" Width="Auto" Height="Auto"/>
         </Grid>
 
         <DockPanel Name="m_waitFrame" Grid.Row="0" Grid.RowSpan="3" Grid.Column="0" Grid.ColumnSpan="2" Background="#AA000000" Opacity="1" Visibility="Hidden">
