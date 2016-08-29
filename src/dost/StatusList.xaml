@@ -1,0 +1,44 @@
+﻿<UserControl x:Class="dost.StatusList"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:dost"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <DockPanel>
+            <Label DockPanel.Dock="Top" Background="#FFE2E2E2" FontWeight="Bold">修改列表</Label>
+            <ListView Name="m_list">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="文件" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Viewbox Width="16" Height="16"></Viewbox>
+                                        <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" Foreground="{Binding Converter={x:Static local:StatusList.StatusToColorConverter}}" ToolTip="{Binding Path}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="工作区状态" Width="Auto" DisplayMemberBinding="{Binding WorkingPathStatus}"/>
+                        <GridViewColumn Header="暂存区状态" Width="Auto" DisplayMemberBinding="{Binding IndexPathStatus}"/>
+                        <GridViewColumn Header="路径" Width="Auto" DisplayMemberBinding="{Binding Path}"/>
+                    </GridView>
+                </ListView.View>
+                <ListView.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="暂存" Click="OnStage" />
+                        <MenuItem Header="取消暂存" Click="OnUnstage" />
+                        <MenuItem Header="迁出已暂存内容 (已修改 --> 曾暂存)" Click="OnCheckoutIndex" />
+                        <MenuItem Header="签出" Click="OnCheckout" />
+                        <MenuItem Header="移除" Click="OnRemove" />
+                        <MenuItem Header="删除(永久)" Click="OnDelete" />
+                        <MenuItem Header="提交已暂存内容" Click="OnCommitIndex" />
+                    </ContextMenu>
+                </ListView.ContextMenu>
+            </ListView>
+        </DockPanel>
+    </Grid>
+</UserControl>

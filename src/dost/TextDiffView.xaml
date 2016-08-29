@@ -1,0 +1,65 @@
+﻿<UserControl x:Class="dost.TextDiffView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:dost"
+             mc:Ignorable="d" Height="130" Width="273">
+    <UserControl.Resources>
+        <local:BlockTextConverterA x:Key="BlockTextConverterA"/>
+        <local:BlockTextConverterB x:Key="BlockTextConverterB"/>
+        <local:BlockColorConverterA x:Key="BlockColorConverterA"/>
+        <local:BlockColorConverterB x:Key="BlockColorConverterB"/>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+
+        <Label Content="浏览" Grid.Row="0" Grid.RowSpan="1" Grid.Column="0" Grid.ColumnSpan="3" Background="#FFE2E2E2" FontWeight="Bold"/>
+        
+        <Grid Name="m_gridText" Grid.Row="1" Visibility="Hidden">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="4" />
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <ScrollViewer Grid.Row="1" Grid.Column="0" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Hidden" ScrollChanged="OnScrollChanged" Name="m_scrollview_A" Style="{StaticResource darkscrollviewer}" Grid.RowSpan="2">
+                <ListBox Name="ListA">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Loaded="StretchDataTemplate" Margin="-1">
+                                <Border BorderBrush="DarkGray" BorderThickness="0,1,0,1" HorizontalAlignment="Stretch" Background="{Binding Converter={StaticResource BlockColorConverterA}}" ToolTip="{Binding EditWithRespectToA}">
+                                    <TextBlock Text="{Binding Converter={StaticResource BlockTextConverterA}}" FontFamily="Consolas"/>
+                                </Border>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </ScrollViewer>
+            <GridSplitter Grid.Row="1" Grid.Column="1" ResizeBehavior="PreviousAndNext" HorizontalAlignment="Stretch" Grid.RowSpan="2"/>
+            <ScrollViewer Grid.Row="1" Grid.Column="2" HorizontalScrollBarVisibility="Visible"  Name="m_scrollview_B"  ScrollChanged="OnScrollChanged" Style="{StaticResource darkscrollviewer}" Grid.RowSpan="2">
+                <ListBox  Name="ListB" >
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Loaded="StretchDataTemplate" Margin="-1">
+                                <Border BorderBrush="DarkGray" BorderThickness="0,1,0,1"  HorizontalAlignment="Stretch" Background="{Binding Converter={StaticResource BlockColorConverterB}}" ToolTip="{Binding EditWithRespectToA}">
+                                    <TextBlock Text="{Binding Converter={StaticResource BlockTextConverterB}}" FontFamily="Consolas"/>
+                                </Border>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </ScrollViewer>
+        </Grid>
+
+        <Grid Name="m_gridDoc" Grid.Row="1" Visibility="Hidden">
+            <DocumentViewer Name="m_docViewer" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        </Grid>
+        
+        <Grid Name="m_gridImg" Grid.Row="1" Visibility="Visible">
+            <Image Name="m_imgViewer"/>
+        </Grid>
+    </Grid>
+</UserControl>

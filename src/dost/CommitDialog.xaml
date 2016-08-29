@@ -1,0 +1,76 @@
+﻿<!--
+ /*
+ * Copyright (C) 2010, Henon<meinrad.recheis@gmail.com>
+ *
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or
+ * without modification, are permitted provided that the following
+ * conditions are met:
+ *
+ * - Redistributions of source code must retain the above copyright
+ *   notice, this list of conditions and the following disclaimer.
+ *
+ * - Redistributions in binary form must reproduce the above
+ *   copyright notice, this list of conditions and the following
+ *   disclaimer in the documentation and/or other materials provided
+ *   with the distribution.
+ *
+ * - Neither the name of the project nor the
+ *   names of its contributors may be used to endorse or promote
+ *   products derived from this software without specific prior
+ *   written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+ * CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+  -->
+    
+<Window x:Class="dost.CommitDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:dost"
+        Title="提交" Height="307" Width="453">
+    <Grid>
+        <DockPanel LastChildFill="True">
+            <DockPanel DockPanel.Dock="Bottom" LastChildFill="False">
+                <Button IsDefault="True" DockPanel.Dock="Right" Margin="5" Click="OnCommit" Width="80" Height="25">提交</Button>
+                <Button IsCancel="True" DockPanel.Dock="Right" Margin="5" Click="OnCancel" Width="80" Height="25">取消</Button>
+            </DockPanel>
+            <DockPanel DockPanel.Dock="Bottom" >
+                <Label DockPanel.Dock="Top">备注信息</Label>
+                <TextBox AcceptsReturn="True" AcceptsTab="True" Margin="5" VerticalScrollBarVisibility="Auto" Height="100" Name="m_message" TextWrapping="Wrap">
+                </TextBox>
+            </DockPanel>
+            <DockPanel DockPanel.Dock="Top" >
+                <Label DockPanel.Dock="Top">暂存更新</Label>
+                <ListView DockPanel.Dock="Top" Name="m_list">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="文件" Width="Auto">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Name}" Foreground="{Binding Converter={x:Static local:StatusList.StatusToColorConverter}}"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="状态" Width="Auto" DisplayMemberBinding="{Binding IndexPathStatus}"/>
+                            <GridViewColumn Header="路径" Width="Auto" DisplayMemberBinding="{Binding Path}"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </DockPanel>
+        </DockPanel>
+    </Grid>
+</Window>
