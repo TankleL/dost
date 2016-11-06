@@ -13,5 +13,12 @@ namespace dost
     /// </summary>
     public partial class App : Application
     {
+        private MainWindow mainWindow;
+
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            mainWindow = new MainWindow(e.Args);
+            mainWindow.Show();
+        }
     }
 }

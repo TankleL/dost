@@ -1,0 +1,97 @@
+﻿<Window x:Class="dost.CloneDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="克隆仓库" Height="325" Width="731" ResizeMode="NoResize" Background="WhiteSmoke" WindowStartupLocation="CenterOwner" Loaded="Window_Loaded">
+    <Grid>
+        <Canvas Name="m_btnRemoteRepo" HorizontalAlignment="Center" Height="73" Margin="0,45,0,0" VerticalAlignment="Top" Width="628">
+            <Canvas.Triggers>
+                <EventTrigger RoutedEvent="MouseEnter">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                    Storyboard.TargetName="m_bkgRemoteRepo"
+                                    Storyboard.TargetProperty="Opacity"
+                                    From="0.0" To="1.0" Duration="0:0:0.15"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="MouseLeave">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                    Storyboard.TargetName="m_bkgRemoteRepo"
+                                    Storyboard.TargetProperty="Opacity"
+                                    From="1.0" To="0.0" Duration="0:0:0.15"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Canvas.Triggers>
+
+            <Canvas Name="m_bkgRemoteRepo" Width="628" Height="73" Background="#FFABE4FF" Opacity="0.0"/>
+
+            <Label Content="远程仓库URL(https)" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Canvas.Top="10"/>
+            <TextBox Name="m_txtRemotePath" Text="[Remote Repository URL]" HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="Bold" FontSize="16" Canvas.Top="35" Canvas.Left="10" Width="605" Height="28"
+                     VerticalContentAlignment="Center" BorderThickness="0"/>
+        </Canvas>
+
+        <Canvas Name="m_btnLocalPlace" HorizontalAlignment="Center" Height="73" Margin="0,130,0,0" VerticalAlignment="Top" Width="628" MouseLeftButtonDown="m_btnLocalPlace_MouseLeftButtonDown" Focusable="True">
+            <Canvas.Triggers>
+                <EventTrigger RoutedEvent="MouseEnter">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                    Storyboard.TargetName="m_bkgLocalPlace"
+                                    Storyboard.TargetProperty="Opacity"
+                                    From="0.0" To="1.0" Duration="0:0:0.15"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="MouseLeave">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                    Storyboard.TargetName="m_bkgLocalPlace"
+                                    Storyboard.TargetProperty="Opacity"
+                                    From="1.0" To="0.0" Duration="0:0:0.15"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Canvas.Triggers>
+
+            <Canvas Name="m_bkgLocalPlace" Width="628" Height="73" Background="#FFABE4FF" Opacity="0.0" Cursor="Hand"/>
+
+            <Label Content="本地路径" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Canvas.Top="10"/>
+            <Label Name="m_txtLocalPath" Content="[Local Full Path]" HorizontalAlignment="Left"  Margin="10,0,0,0" VerticalAlignment="Top" FontWeight="Bold" FontSize="16" Canvas.Top="35"/>
+        </Canvas>
+
+
+        <Canvas Name="m_bkgOkay" HorizontalAlignment="Left" Height="37" Margin="520,227,0,0" VerticalAlignment="Top" Width="148" Background="#FF3399FF"/>
+        <Label Name="m_btnOkay" HorizontalAlignment="Left" Height="37" Margin="520,227,0,0" VerticalAlignment="Top" Width="148" Content="确定" Foreground="White"
+               HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" RenderTransformOrigin="0.48,0.595" Cursor="Hand"
+               MouseLeftButtonDown="m_btnOkay_MouseLeftButtonDown" Focusable="True">
+            <Label.Triggers>
+                <EventTrigger RoutedEvent="MouseEnter">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                    Storyboard.TargetName="m_bkgOkay"
+                                    Storyboard.TargetProperty="Opacity"
+                                    From="1.0" To="0.8" Duration="0:0:0.15"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="MouseLeave">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                    Storyboard.TargetName="m_bkgOkay"
+                                    Storyboard.TargetProperty="Opacity"
+                                    From="0.8" To="1.0" Duration="0:0:0.15"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Label.Triggers>
+        </Label>
+
+    </Grid>
+</Window>

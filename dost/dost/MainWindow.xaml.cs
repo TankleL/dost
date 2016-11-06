@@ -25,8 +25,9 @@ namespace dost
     public partial class MainWindow : Window
     {
         private Repository  m_repo;
+        private String[]    m_startArgs;
 
-        public MainWindow()
+        public MainWindow(String[] startArgs)
         {
             InitializeComponent();
             m_historyGraph.CommitClicked += SelectCommit;
@@ -40,16 +41,28 @@ namespace dost
                 this.m_fileTree.RaiseEvent(eventArg);
             };
 
-            m_welcomeBgk.Visibility = System.Windows.Visibility.Visible;
-            m_bgkLoadRepo.Visibility = System.Windows.Visibility.Visible;
-            m_btnLoadRepo.Visibility = System.Windows.Visibility.Visible;
+            m_startArgs = startArgs;
+            if (m_startArgs != null && m_startArgs.Length > 0)
+            {
+                if(LoadRepo(m_startArgs[0]))
+                {
+                    m_gridWelcome.Visibility = System.Windows.Visibility.Hidden;
 
-            m_bgkNewRepo.Visibility = System.Windows.Visibility.Visible;
-            m_btnNewRepo.Visibility = System.Windows.Visibility.Visible;
+                    m_girdBrowse.Visibility = System.Windows.Visibility.Visible;
+                    m_cards.Visibility = System.Windows.Visibility.Visible;
+                }
+                else
+                {
+                    MessageBox.Show("无法打开仓库", "错误");
+                }
+            }
+            else
+            {
+                m_gridWelcome.Visibility = System.Windows.Visibility.Visible;
 
-            m_cards.Visibility = System.Windows.Visibility.Hidden;
-            m_gridDetailInfo.Visibility = System.Windows.Visibility.Hidden;
-            m_commitInfo.Visibility = System.Windows.Visibility.Hidden;
+                m_girdBrowse.Visibility = System.Windows.Visibility.Hidden;
+                m_cards.Visibility = System.Windows.Visibility.Hidden;                
+            }
 
             DocOpt.ClearSpace();
 
@@ -180,6 +193,39 @@ namespace dost
             return res;
         }
 
+        private bool LoadRepo(string repoPath)
+        {
+            bool res = false;
+            try
+            {
+                SetStatus("加载中...");
+
+                if (null != m_repo)
+                {
+                    m_repo.Close();
+                    m_repo = null;
+                }
+
+                m_repo = new Repository(repoPath);
+                m_historyGraph.Update(m_repo);
+                m_statusView.Update(m_repo);
+                SelectCommit(m_repo.Head.CurrentCommit);
+
+                res = true;
+            }
+            catch (Exception ex)
+            {
+                SetStatus("发生错误...");
+                MessageBox.Show(ex.Message, "加载过程错误");
+            }
+            finally
+            {
+                SetStatusReady();
+            }
+
+            return res;
+        }
+
         private bool ReLoadRepo(string repoPath)
         {
             bool res = false;
@@ -213,6 +259,41 @@ namespace dost
             return res;
         }
 
+        private bool CloneRepoAndStart()
+        {
+            CloneDialog cloneDlg = new CloneDialog();
+            cloneDlg.Owner = this;
+            if(cloneDlg.ShowDialog() == true)
+            {
+                if (null != m_repo)
+                {
+                    m_repo.Close();
+                    m_repo = null;
+                }
+
+                try
+                {
+                    m_repo = new Repository(cloneDlg.RepoPath);
+                    m_historyGraph.Update(m_repo);
+                    m_statusView.Update(m_repo);
+                    SelectCommit(m_repo.Head.CurrentCommit);
+                }
+                catch(Exception ex)
+                {
+                    SetStatus("发生错误...");
+                    MessageBox.Show(ex.Message, "加载过程错误");
+                }
+                finally
+                {
+                    SetStatusReady();
+                }
+
+                return true;
+            }
+            else
+                return false;
+        }
+
         private void LeaveRepo()
         {
             if(m_repo != null)
@@ -223,21 +304,14 @@ namespace dost
         {
             if(LoadRepo())
             {
-                m_welcomeBgk.Visibility = System.Windows.Visibility.Hidden;
-                m_bgkLoadRepo.Visibility = System.Windows.Visibility.Hidden;
-                m_btnLoadRepo.Visibility = System.Windows.Visibility.Hidden;
-
-                m_bgkNewRepo.Visibility = System.Windows.Visibility.Hidden;
-                m_btnNewRepo.Visibility = System.Windows.Visibility.Hidden;
+                m_gridWelcome.Visibility = System.Windows.Visibility.Hidden;
 
                 m_gridEdit.Visibility = System.Windows.Visibility.Hidden;
                 m_mi_mode_browse.IsChecked = true;
                 m_mi_mode_edit.IsChecked = false;
 
                 m_cards.Visibility = System.Windows.Visibility.Visible;
-                m_commitDiffView.Visibility = System.Windows.Visibility.Visible;
-                m_commitInfo.Visibility = System.Windows.Visibility.Visible;
-                m_gridDetailInfo.Visibility = System.Windows.Visibility.Visible;
+                m_girdBrowse.Visibility = System.Windows.Visibility.Visible;
             }
         }
 
@@ -250,21 +324,14 @@ namespace dost
         {
             if(ReLoadRepo(m_repoPathText.Text))
             {
-                m_welcomeBgk.Visibility = System.Windows.Visibility.Hidden;
-                m_bgkLoadRepo.Visibility = System.Windows.Visibility.Hidden;
-                m_btnLoadRepo.Visibility = System.Windows.Visibility.Hidden;
-
-                m_bgkNewRepo.Visibility = System.Windows.Visibility.Hidden;
-                m_btnNewRepo.Visibility = System.Windows.Visibility.Hidden;
+                m_gridWelcome.Visibility = System.Windows.Visibility.Hidden;
 
                 m_gridEdit.Visibility = System.Windows.Visibility.Hidden;
                 m_mi_mode_browse.IsChecked = true;
                 m_mi_mode_edit.IsChecked = false;
 
                 m_cards.Visibility = System.Windows.Visibility.Visible;
-                m_commitDiffView.Visibility = System.Windows.Visibility.Visible;
-                m_commitInfo.Visibility = System.Windows.Visibility.Visible;
-                m_gridDetailInfo.Visibility = System.Windows.Visibility.Visible;
+                m_girdBrowse.Visibility = System.Windows.Visibility.Visible;
             }
         }
 
@@ -272,42 +339,28 @@ namespace dost
         {
             LeaveRepo();
 
-            m_welcomeBgk.Visibility = System.Windows.Visibility.Visible;
-            m_bgkLoadRepo.Visibility = System.Windows.Visibility.Visible;
-            m_btnLoadRepo.Visibility = System.Windows.Visibility.Visible;
-
-            m_bgkNewRepo.Visibility = System.Windows.Visibility.Visible;
-            m_btnNewRepo.Visibility = System.Windows.Visibility.Visible;
+            m_gridWelcome.Visibility = System.Windows.Visibility.Visible;
 
             m_gridEdit.Visibility = System.Windows.Visibility.Hidden;
             m_mi_mode_browse.IsChecked = true;
             m_mi_mode_edit.IsChecked = false;
 
             m_cards.Visibility = System.Windows.Visibility.Hidden;
-            m_commitDiffView.Visibility = System.Windows.Visibility.Hidden;
-            m_commitInfo.Visibility = System.Windows.Visibility.Hidden;
-            m_gridDetailInfo.Visibility = System.Windows.Visibility.Hidden;
+            m_girdBrowse.Visibility = System.Windows.Visibility.Hidden;
         }
 
         private void m_btnLoadRepo_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (LoadRepo())
             {
-                m_welcomeBgk.Visibility = System.Windows.Visibility.Hidden;
-                m_bgkLoadRepo.Visibility = System.Windows.Visibility.Hidden;
-                m_btnLoadRepo.Visibility = System.Windows.Visibility.Hidden;
-
-                m_bgkNewRepo.Visibility = System.Windows.Visibility.Hidden;
-                m_btnNewRepo.Visibility = System.Windows.Visibility.Hidden;
+                m_gridWelcome.Visibility = System.Windows.Visibility.Hidden;
 
                 m_gridEdit.Visibility = System.Windows.Visibility.Hidden;
                 m_mi_mode_browse.IsChecked = true;
                 m_mi_mode_edit.IsChecked = false;
 
                 m_cards.Visibility = System.Windows.Visibility.Visible;
-                m_commitDiffView.Visibility = System.Windows.Visibility.Visible;
-                m_commitInfo.Visibility = System.Windows.Visibility.Visible;
-                m_gridDetailInfo.Visibility = System.Windows.Visibility.Visible;
+                m_girdBrowse.Visibility = System.Windows.Visibility.Visible;
 
                 m_textDiff.Clear();
             }
@@ -317,21 +370,29 @@ namespace dost
         {
             if(NewRepo())
             {
-                m_welcomeBgk.Visibility = System.Windows.Visibility.Hidden;
-                m_bgkLoadRepo.Visibility = System.Windows.Visibility.Hidden;
-                m_btnLoadRepo.Visibility = System.Windows.Visibility.Hidden;
-
-                m_bgkNewRepo.Visibility = System.Windows.Visibility.Hidden;
-                m_btnNewRepo.Visibility = System.Windows.Visibility.Hidden;
+                m_gridWelcome.Visibility = System.Windows.Visibility.Hidden;
 
                 m_gridEdit.Visibility = System.Windows.Visibility.Hidden;
                 m_mi_mode_browse.IsChecked = true;
                 m_mi_mode_edit.IsChecked = false;
 
                 m_cards.Visibility = System.Windows.Visibility.Visible;
-                m_commitDiffView.Visibility = System.Windows.Visibility.Visible;
-                m_commitInfo.Visibility = System.Windows.Visibility.Visible;
-                m_gridDetailInfo.Visibility = System.Windows.Visibility.Visible;
+                m_girdBrowse.Visibility = System.Windows.Visibility.Visible;
+            }
+        }
+
+        private void m_btnCloneRepo_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (CloneRepoAndStart())
+            {
+                m_gridWelcome.Visibility = System.Windows.Visibility.Hidden;
+
+                m_gridEdit.Visibility = System.Windows.Visibility.Hidden;
+                m_mi_mode_browse.IsChecked = true;
+                m_mi_mode_edit.IsChecked = false;
+
+                m_cards.Visibility = System.Windows.Visibility.Visible;
+                m_girdBrowse.Visibility = System.Windows.Visibility.Visible;
             }
         }
 
@@ -339,21 +400,14 @@ namespace dost
         {
             if (NewRepo())
             {
-                m_welcomeBgk.Visibility = System.Windows.Visibility.Hidden;
-                m_bgkLoadRepo.Visibility = System.Windows.Visibility.Hidden;
-                m_btnLoadRepo.Visibility = System.Windows.Visibility.Hidden;
-
-                m_bgkNewRepo.Visibility = System.Windows.Visibility.Hidden;
-                m_btnNewRepo.Visibility = System.Windows.Visibility.Hidden;
+                m_gridWelcome.Visibility = System.Windows.Visibility.Hidden;
 
                 m_gridEdit.Visibility = System.Windows.Visibility.Hidden;
                 m_mi_mode_browse.IsChecked = true;
                 m_mi_mode_edit.IsChecked = false;
 
                 m_cards.Visibility = System.Windows.Visibility.Visible;
-                m_commitDiffView.Visibility = System.Windows.Visibility.Visible;
-                m_commitInfo.Visibility = System.Windows.Visibility.Visible;
-                m_gridDetailInfo.Visibility = System.Windows.Visibility.Visible;
+                m_girdBrowse.Visibility = System.Windows.Visibility.Visible;
             }
         }
 
@@ -364,10 +418,7 @@ namespace dost
 
             if (null != m_repo)
             {
-                m_gridDetailInfo.Visibility = System.Windows.Visibility.Visible;
-                m_commitDiffView.Visibility = System.Windows.Visibility.Visible;
-                m_commitInfo.Visibility = System.Windows.Visibility.Visible;
-
+                m_girdBrowse.Visibility = System.Windows.Visibility.Visible;
                 m_gridEdit.Visibility = System.Windows.Visibility.Hidden;
             }
 
@@ -380,9 +431,7 @@ namespace dost
 
             if (null != m_repo)
             {
-                m_gridDetailInfo.Visibility = System.Windows.Visibility.Hidden;
-                m_commitDiffView.Visibility = System.Windows.Visibility.Hidden;
-                m_commitInfo.Visibility = System.Windows.Visibility.Hidden;
+                m_girdBrowse.Visibility = System.Windows.Visibility.Hidden;
 
                 m_gridEdit.Visibility = System.Windows.Visibility.Visible;
             }
